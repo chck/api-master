@@ -56,6 +56,7 @@ class MarketCrawler
 
   def bulk_upsert(items_h=[{}])
     items = items_h.map{|item|
+      p item[:title]
       YahooTickets.new(
         id: item[:id],
         query: item[:query],
@@ -81,9 +82,13 @@ class MarketCrawler
   def main
     items = get_all_items.map{|row| {id:row["AuctionID"], query: @query, title:clean_title(row["Title"]), current_price:row["CurrentPrice"], bids: row["Bids"], bid_or_buy:row["BidOrBuy"]}}
     bulk_upsert(items)
-    p "success!!"
+    p "success!!: #{items.size}"
   end
 end
 
-mc = MarketCrawler.new($conf["query"])
-mc.main
+if __FILE__ == $0
+  mc = MarketCrawler.new($conf["query"])
+  #loop do
+  mc.main
+  #end
+end
